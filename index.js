@@ -13,7 +13,7 @@ app.use((req,res,next)=>{
     next();
 });
 
-const filePath = path.join(fileDir, `file-${Date.now()}-${fileSize}`)
+const filePath = path.join(fileDir, `file-${fileSize}`)
 const testData = Buffer.alloc(fileSize);
 
 const writeStart = process.hrtime.bigint();
