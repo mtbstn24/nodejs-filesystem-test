@@ -14,23 +14,26 @@ app.use((req,res,next)=>{
 });
 
 const filePath = path.join(fileDir, `file-${Date.now()}-${fileSize}`)
-const writeStart = process.hrtime();
 const testData = Buffer.alloc(fileSize);
-fs.writeFileSync(filePath,testData);
 
-const writeEnd = process.hrtime(writeStart);
-const writeDuration = writeEnd[0] * 1000 + writeEnd[1] / 1000000;
+const writeStart = process.hrtime.bigint();
+fs.writeFileSync(filePath,testData);
+const writeEnd = process.hrtime.bigint();
+const writeDuration = (writeEnd - writeStart);
+
+const durationStr = writeDuration.toString();
+const duration = parseInt(durationStr,10)/1000000;
 
 durations.push({
     size: fileSize,
-    write: writeDuration
+    write: writeDuration,
+    duration: duration
 });
 
 console.log(durations);
 
 app.get('/', (req,res) => {
-    res.send('Connection successful.\n');
-    res.send(durations);
+    res.send('Connection successful');
 });
 
 app.listen(3000, ()=> console.log('App listening in port 3000.'));
