@@ -9,6 +9,7 @@ const maxFileSize = 1024 * 1024 * 100; //100MB
 var writeDurations = [];
 var finalDurations = [];
 var writeDuration;
+var filesizeInKB;
 
 app.use((req,res,next)=>{
     console.log('\nTime: ', Date.now());
@@ -36,6 +37,7 @@ function writeProcess(filesize) {
         writeDurationNS = (writeEnd - writeStart);
         durationStr = writeDurationNS.toString();
         writeDuration = parseInt(durationStr,10)/1000000;
+        fs.rmSync(filePath);
     
         writeDurations.push({
             size: filesize,
@@ -47,11 +49,20 @@ function writeProcess(filesize) {
     }
     
     writeDuration = sum/10;
-    
-    finalDurations.push({
-        Filesize: filesize/(1024*1024) + ' MB',
-        WriteDuration: writeDuration + ' ms'
-    });
+
+    filesizeInKB = filesize/1024;
+
+    if(filesizeInKB >= 1024){
+        finalDurations.push({
+            Filesize: filesizeInKB/(1024) + ' MB',
+            WriteDuration: writeDuration + ' ms'
+        });
+    }else{
+        finalDurations.push({
+            Filesize: filesizeInKB + ' KB',
+            WriteDuration: writeDuration + ' ms'
+        });
+    }
 
     console.log(writeDurations);
     
@@ -67,7 +78,7 @@ function writeProcessMultiple() {
     while(fileSize<=maxFileSize){
         writeProcess(fileSize);
         index++;
-         //fileSize = Math.pow(fileSize,index);
+        //fileSize = Math.pow(fileSize,index);
         fileSize = fileSize + 1024*1024;
     }
     console.log(finalDurations);
