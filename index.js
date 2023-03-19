@@ -4,15 +4,11 @@ const express = require('express');
 const app = express();
 
 const fileDir = '../file/';
-const minfileSize = 1024;
-//const maxFileSize = 1024 * 1024 * 10; //10MB
-const maxFileSize = 1024 * 10; //10KB
+const minfileSize = 1024 * 10; //10KB
+const maxFileSize = 1024 * 1024 * 100; //100MB
 var writeDurations = [];
 var finalDurations = [];
 var writeDuration;
-
-// var filePath = path.join(fileDir, `file-${fileSize}`)
-// var testData = Buffer.alloc(fileSize);
 
 app.use((req,res,next)=>{
     console.log('\nTime: ', Date.now());
@@ -53,13 +49,13 @@ function writeProcess(filesize) {
     writeDuration = sum/10;
     
     finalDurations.push({
-        Filesize: filesize,
-        WriteDuration: writeDuration
+        Filesize: filesize/(1024*1024) + ' MB',
+        WriteDuration: writeDuration + ' ms'
     });
 
     console.log(writeDurations);
     
-    console.log(`FileSize: ${filesize}, AvgDuration: ${writeDuration}`);
+    console.log(`FileSize (Bytes): ${filesize}, AvgDuration (ms): ${writeDuration}`);
 }
 
 function writeProcessMultiple() {
@@ -67,9 +63,12 @@ function writeProcessMultiple() {
     writeDurations = [];
     finalDurations = [];
     var fileSize = minfileSize;
+    var index = 1;
     while(fileSize<=maxFileSize){
         writeProcess(fileSize);
-        fileSize = fileSize + 1024;
+        index++;
+         //fileSize = Math.pow(fileSize,index);
+        fileSize = fileSize + 1024*1024;
     }
     console.log(finalDurations);
 }
