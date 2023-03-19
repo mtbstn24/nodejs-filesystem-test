@@ -4,12 +4,11 @@ const express = require('express');
 const app = express();
 
 const fileDir = '../file/';
-const fileSize = 1024;
-const maxFileSize = 1024 * 1024 * 10; //10MB
-var durations = [];
-
-const filePath = path.join(fileDir, `file-${fileSize}`)
-const testData = Buffer.alloc(fileSize);
+const minfileSize = 1024 * 10; //10KB
+const maxFileSize = 1024 * 1024 * 100; //100MB
+var writeDurations = [];
+var finalDurations = [];
+var writeDuration;
 
 app.use((req,res,next)=>{
     console.log('\nTime: ', Date.now());
@@ -17,14 +16,16 @@ app.use((req,res,next)=>{
 });
 
 function writeProcess(filesize) {
-    durations = [];
+    writeDurations = [];
+    var filePath = path.join(fileDir, `file-${filesize}`)
+    var testData = Buffer.alloc(filesize);
 
     var writeStart = process.hrtime.bigint();
     fs.writeFileSync(filePath,testData);
     var writeEnd = process.hrtime.bigint();
-    var writeDuration = (writeEnd - writeStart);
-    var durationStr = writeDuration.toString();
-    var duration = parseInt(durationStr,10)/1000000;
+    var writeDurationNS = (writeEnd - writeStart);
+    var durationStr = writeDurationNS.toString();
+    writeDuration = parseInt(durationStr,10)/1000000;
     
     var sum=0;
     
@@ -32,30 +33,51 @@ function writeProcess(filesize) {
         writeStart = process.hrtime.bigint();
         fs.writeFileSync(filePath,testData);
         writeEnd = process.hrtime.bigint();
-        writeDuration = (writeEnd - writeStart);
-        durationStr = writeDuration.toString();
-        duration = parseInt(durationStr,10)/1000000;
+        writeDurationNS = (writeEnd - writeStart);
+        durationStr = writeDurationNS.toString();
+        writeDuration = parseInt(durationStr,10)/1000000;
     
-        durations.push({
-            size: fileSize,
-            write: writeDuration,
-            duration: duration
+        writeDurations.push({
+            size: filesize,
+            write: writeDurationNS,
+            duration: writeDuration
         });
     
-        sum = sum + duration;
+        sum = sum + writeDuration;
     }
     
-    duration = sum/10;
+    writeDuration = sum/10;
     
-    console.log(durations);
+    finalDurations.push({
+        Filesize: filesize/(1024*1024) + ' MB',
+        WriteDuration: writeDuration + ' ms'
+    });
+
+    console.log(writeDurations);
     
-    console.log(`FileSize: ${fileSize}, AvgDuration: ${duration}`);      
+    console.log(`FileSize (Bytes): ${filesize}, AvgDuration (ms): ${writeDuration}`);
 }
+
+function writeProcessMultiple() {
+    
+    writeDurations = [];
+    finalDurations = [];
+    var fileSize = minfileSize;
+    var index = 1;
+    while(fileSize<=maxFileSize){
+        writeProcess(fileSize);
+        index++;
+         //fileSize = Math.pow(fileSize,index);
+        fileSize = fileSize + 1024*1024;
+    }
+    console.log(finalDurations);
+}
+
 
 app.get('/', (req,res) => {
     //res.send('Connection successful');
-    writeProcess();
-    res.send(`fileSize: ${durations[0].size}, duration: ${durations[0].duration}`);
+    writeProcessMultiple();
+    res.status(200).json(finalDurations);
 });
 
 app.listen(3000, ()=> console.log('App listening in port 3000.'));
