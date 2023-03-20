@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const express = require('express');
 const app = express();
+const os = require('os');
 
 const fileDir = '../tmp/';
 const minfileSize = 1024 * 10; //10KB
@@ -130,7 +131,7 @@ function writeProcessMultiple() {
 }
 
 
-app.get('/', (req,res) => {
+app.get('/file', (req,res) => {
     //res.send('Connection successful');
     writeProcessMultiple();
     //res.status(200).json(finalDurations);
@@ -139,5 +140,10 @@ app.get('/', (req,res) => {
     res.write(csvString);
     res.end();
 });
+
+app.get('/',(req,res) => {
+    res.statusCode = 200;
+    res.send(`Connection successful to the host: ${os.hostname} </br>Use the /file endpoint to Benchmark the File oprations`)
+})
 
 app.listen(3000, ()=> console.log('App listening in port 3000.'));
