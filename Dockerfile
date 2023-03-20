@@ -6,5 +6,7 @@ RUN npm install --production --silent && mv node_modules ../
 COPY . .
 EXPOSE 3000
 RUN chown -R node /usr/src/app
-USER 10001
+RUN addgroup -g 10014 choreo && \
+    adduser  --disabled-password  --no-create-home --uid 10014 --ingroup choreo choreouser
+USER 10014
 CMD ["npm", "start"]
