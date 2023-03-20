@@ -7,6 +7,6 @@ COPY . .
 EXPOSE 3000
 #RUN chown -R node /usr/src/app
 RUN addgroup -g 10014 choreo && \
-    adduser  --disabled-password  --no-create-home --uid 10014 --ingroup choreo choreouser
+    adduser  --disabled-password --uid 10014 --ingroup choreo choreouser
 USER 10014
 CMD ["npm", "start"]
