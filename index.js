@@ -108,7 +108,7 @@ function readProcess(filesize, filepath) {
     console.log(`FileSize (KB): ${filesize}, AvgDuration (ms): ${readDuration}`);
 }
 
-function writeProcessMultiple() {
+function fileProcessMultiple() {
     
     writeDurations = [];
     finalDurations = [];
@@ -133,7 +133,7 @@ function writeProcessMultiple() {
 
 app.get('/file', (req,res) => {
     //res.send('Connection successful');
-    writeProcessMultiple();
+    fileProcessMultiple();
     //res.status(200).json(finalDurations);
     res.statusCode = 200;
     res.setHeader('Content-Type','text/csv');
