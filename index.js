@@ -130,7 +130,7 @@ function writeProcessMultiple() {
 }
 
 
-app.get('/', (req,res) => {
+app.get('/file', (req,res) => {
     //res.send('Connection successful');
     writeProcessMultiple();
     //res.status(200).json(finalDurations);
