@@ -143,7 +143,9 @@ app.get('/file', (req,res) => {
 
 app.get('/',(req,res) => {
     res.statusCode = 200;
-    res.send(`Connection successful to the host: ${os.hostname} </br>Use the /file endpoint to Benchmark the File oprations`)
+    res.write(`Connection successful to the host: ${os.hostname}`)
+    res.write('\nUse the /file endpoint to Benchmark the File oprations')
+    res.end();
 })
 
 app.listen(3000, ()=> console.log('App listening in port 3000.'));

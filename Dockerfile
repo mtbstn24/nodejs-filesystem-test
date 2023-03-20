@@ -9,4 +9,4 @@ EXPOSE 3000
 RUN addgroup -g 10014 choreo && \
     adduser  --disabled-password --uid 10014 --ingroup choreo choreouser
 USER 10014
-CMD ["npm", "start"]
+CMD ["node", "index.js"]
