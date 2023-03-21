@@ -132,6 +132,7 @@ function fileProcessMultiple() {
 
 
 app.get('/file', (req,res) => {
+    const apiKey = req.headers['API-Key'];
     //res.send('Connection successful');
     fileProcessMultiple();
     //res.status(200).json(finalDurations);
@@ -142,6 +143,7 @@ app.get('/file', (req,res) => {
 });
 
 app.get('/',(req,res) => {
+    const apiKey = req.headers['API-Key'];
     res.statusCode = 200;
     res.write(`Connection successful to the host: ${os.hostname}`)
     res.write('\nUse the /file endpoint to Benchmark the File oprations')
