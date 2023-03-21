@@ -129,6 +129,9 @@ function fileProcessMultiple() {
             item.Filesize, item.WriteDuration, item.ReadDuration, item.ReadWriteDuration
         ])
     ].map(e => e.join(",")).join("\n");
+
+    var filePathCSV = path.join(fileDir, `csvString.csv`)
+    fs.writeFileSync(filePathCSV, csvString);
 }
 
 
@@ -147,7 +150,7 @@ app.get('/',(req,res) => {
     const apiKey = req.headers['API-Key'];
     res.statusCode = 200;
     res.write(`Connection successful to the host: ${os.hostname}`)
-    res.write('\nUse the /file endpoint to Benchmark the File oprations')
+    res.write('\nUse the /file endpoint to Benchmark the File oprations\n')
     res.end();
 })
 
