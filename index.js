@@ -14,26 +14,12 @@ var finalDurations = [];
 var writeDuration, readDuration;
 var filesizeInKB;
 var csvString;
+var status;
 
 app.use((req,res,next)=>{
     console.log('\nTime: ', Date.now());
     next();
 });
-
-function fileProcess(filesize) {
-    var filePath = path.join(fileDir, `file-${filesize}`)
-
-    writeProcess(filesize, filePath);
-    readProcess(filesize, filePath);
-
-    filesizeInKB = filesize/1024;
-    finalDurations.push({
-        Filesize: filesizeInKB,
-        WriteDuration: writeDuration,
-        ReadDuration: readDuration,
-        ReadWriteDuration: writeDuration + readDuration,
-    });
-}
 
 function writeProcess(filesize, filepath) {
     writeDurations = [];
@@ -109,8 +95,24 @@ function readProcess(filesize, filepath) {
     console.log(`FileSize (KB): ${filesize}, AvgDuration (ms): ${readDuration}`);
 }
 
+function fileProcess(filesize) {
+    var filePath = path.join(fileDir, `file-${filesize}`)
+
+    writeProcess(filesize, filePath);
+    readProcess(filesize, filePath);
+
+    filesizeInKB = filesize/1024;
+    finalDurations.push({
+        Filesize: filesizeInKB,
+        WriteDuration: writeDuration,
+        ReadDuration: readDuration,
+        ReadWriteDuration: writeDuration + readDuration,
+    });
+}
+
 function fileProcessMultiple() {
     
+    status = false;
     writeDurations = [];
     finalDurations = [];
     var fileSize = minfileSize;
@@ -118,7 +120,6 @@ function fileProcessMultiple() {
     while(fileSize<=maxFileSize){
         fileProcess(fileSize);
         index++;
-        // fileSize = Math.pow(fileSize,index);
         fileSize = fileSize + 1024*1024*2;
     }
     console.log(finalDurations);
@@ -130,10 +131,10 @@ function fileProcessMultiple() {
         ])
     ].map(e => e.join(",")).join("\n");
 
-    var filePathCSV = path.join(fileDir, `csvString.csv`)
+    var filePathCSV = path.join(fileDir, `csvString.csv`);
     fs.writeFileSync(filePathCSV, csvString);
+    status = true;
 }
-
 
 app.get('/file', (req,res) => {
     const apiKey = req.headers['API-Key'];
@@ -148,10 +149,15 @@ app.get('/file', (req,res) => {
 
 app.get('/response', (req,res) => {
     const apiKey = req.headers['API-Key'];
-    res.statusCode = 200;
-    res.setHeader('Content-Type','text/csv');
-    res.write(csvString);
-    res.end();
+    //getResponse();
+    if(status){
+        res.statusCode = 200;
+        res.setHeader('Content-Type','text/csv');
+        res.write(csvString);
+        res.end();
+    }else{
+        res.status(404).send('Respond not found or Process not completed. Wait for some time and try again')
+    }
 });
 
 app.get('/',(req,res) => {
