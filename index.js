@@ -27,7 +27,6 @@ function writeProcess(filesize, filepath) {
     var testData = Buffer.alloc(filesize);
 
     var writeStart = process.hrtime.bigint();
-    fs.writeFileSync(filePath,testData);
     var writeEnd = process.hrtime.bigint();
     var writeDurationNS = (writeEnd - writeStart);
     var durationStr = writeDurationNS.toString();
@@ -63,7 +62,6 @@ function readProcess(filesize, filepath) {
     var filePath = filepath;
 
     var readStart = process.hrtime.bigint();
-    fs.readFileSync(filePath);
     var readEnd = process.hrtime.bigint();
     var readDurationNS = (readEnd - readStart);
     var durationStr = readDurationNS.toString();
@@ -111,7 +109,6 @@ function fileProcess(filesize) {
 }
 
 function fileProcessMultiple() {
-    
     status = false;
     writeDurations = [];
     finalDurations = [];
