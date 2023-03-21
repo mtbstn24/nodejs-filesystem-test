@@ -3,8 +3,9 @@ const path = require('path');
 const express = require('express');
 const app = express();
 const os = require('os');
+require('dotenv').config();
 
-const fileDir = '../tmp/';
+const fileDir = process.env.DIR;
 const minfileSize = 1024 * 10; //10KB
 const maxFileSize = 1024 * 1024 * 100; //100MB
 var writeDurations = [];
