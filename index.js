@@ -150,7 +150,8 @@ app.get('/response', (req,res) => {
         res.write(csvString);
         res.end();
     }else{
-        res.status(404).send('Respond not found or Process not completed. Wait for some time and try again')
+        res.statusMessage = "Respond not found or Process not completed.";
+        res.status(404).send("Respond not found or Process not completed. \nMake a request to /file endpoint first. \nWait for some time and try again if you have already requested /file endpoint.").end();
     }
 });
 
@@ -158,8 +159,8 @@ app.get('/',(req,res) => {
     const apiKey = req.headers['API-Key'];
     res.statusCode = 200;
     res.write(`Connection successful to the host: ${os.hostname}`)
-    res.write('\nUse the /file endpoint to Benchmark the File oprations\n')
-    res.write('\nUse the /response endpoint to get the csv string of the response of Benchmarking the File oprations\n')
+    res.write('\nUse the /file endpoint to Benchmark the File oprations')
+    res.write('\nUse the /response endpoint to get the csv string of the response of Benchmarking the File oprations\n\n')
     res.end();
 })
 
