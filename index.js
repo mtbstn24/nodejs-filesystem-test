@@ -138,9 +138,7 @@ function fileProcessMultiple() {
 
 app.get('/file', (req,res) => {
     const apiKey = req.headers['API-Key'];
-    //res.send('Connection successful');
     fileProcessMultiple();
-    //res.status(200).json(finalDurations);
     res.statusCode = 200;
     res.setHeader('Content-Type','text/csv');
     res.write(csvString);
@@ -149,7 +147,6 @@ app.get('/file', (req,res) => {
 
 app.get('/response', (req,res) => {
     const apiKey = req.headers['API-Key'];
-    //getResponse();
     if(status){
         res.statusCode = 200;
         res.setHeader('Content-Type','text/csv');
