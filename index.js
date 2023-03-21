@@ -146,11 +146,20 @@ app.get('/file', (req,res) => {
     res.end();
 });
 
+app.get('/response', (req,res) => {
+    const apiKey = req.headers['API-Key'];
+    res.statusCode = 200;
+    res.setHeader('Content-Type','text/csv');
+    res.write(csvString);
+    res.end();
+});
+
 app.get('/',(req,res) => {
     const apiKey = req.headers['API-Key'];
     res.statusCode = 200;
     res.write(`Connection successful to the host: ${os.hostname}`)
     res.write('\nUse the /file endpoint to Benchmark the File oprations\n')
+    res.write('\nUse the /response endpoint to get the csv string of the response of Benchmarking the File oprations\n')
     res.end();
 })
 
