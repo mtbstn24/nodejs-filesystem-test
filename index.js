@@ -113,14 +113,11 @@ function fileProcessMultiple() {
     writeDurations = [];
     finalDurations = [];
     var fileSize = minfileSize;
-    var index = 1;
     while(fileSize<=maxFileSize){
         fileProcess(fileSize);
-        index++;
         fileSize = fileSize + 1024*1024*2;
     }
     console.log(finalDurations);
-
     csvString = [
         ["FileSize (KB)", "Write Duration (ms)", "Read Duration (ms)", "Read and Write Duration (ms)"],
         ...finalDurations.map(item => [
