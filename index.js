@@ -179,7 +179,7 @@ app.get('/',(req,res) => {
     res.write(`Connection successful to the host: ${os.hostname}`)
     res.write('\nUse the /file endpoint to Benchmark the File oprations')
     res.write('\nUse the /response endpoint to get the csv string of the response of Benchmarking the File oprations')
-    res.write('\nUse the /json endpoint to get a sample json endpoint')
+    res.write('\nUse the /json endpoint to get a sample json endpoint');
     res.write('\nUse the /externalapi endpoint to get a sample json response from an external API\n\n')
     res.end();
 })
