@@ -3,6 +3,7 @@ const path = require('path');
 const express = require('express');
 const app = express();
 const os = require('os');
+const { sampleJson } = require('./sample');
 require('dotenv').config();
 
 const fileDir = process.env.DIR;
@@ -130,6 +131,14 @@ function fileProcessMultiple() {
     status = true;
 }
 
+app.get('/json', (req,res) => {
+    const apiKey = req.headers['API-Key'];
+    res.statusCode = 200;
+    res.setHeader('Content-Type','text/json');
+    res.send(sampleJson);
+    res.end();
+});
+
 app.get('/file', (req,res) => {
     const apiKey = req.headers['API-Key'];
     fileProcessMultiple();
@@ -156,6 +165,7 @@ app.get('/',(req,res) => {
     const apiKey = req.headers['API-Key'];
     res.statusCode = 200;
     res.write(`Connection successful to the host: ${os.hostname}`)
+    res.write('\nUse the /json endpoint to get a sample json endpoint')
     res.write('\nUse the /file endpoint to Benchmark the File oprations')
     res.write('\nUse the /response endpoint to get the csv string of the response of Benchmarking the File oprations\n\n')
     res.end();
