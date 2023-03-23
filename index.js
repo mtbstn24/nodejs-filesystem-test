@@ -4,6 +4,7 @@ const express = require('express');
 const app = express();
 const os = require('os');
 const { sampleJson } = require('./sample');
+const { default: axios } = require('axios');
 require('dotenv').config();
 
 const fileDir = process.env.DIR;
@@ -131,11 +132,22 @@ function fileProcessMultiple() {
     status = true;
 }
 
+app.get('/externalapi', (req,res) => {
+    const apiKey = req.headers['API-Key'];
+    axios.get('https://jsonplaceholder.typicode.com/users').then(jsonres => {
+        res.statusCode = 200;
+        res.write(JSON.stringify(jsonres.data, null, " "));
+        res.end()
+    }).catch(err => {
+        res.send(err);
+    });
+});
+
 app.get('/json', (req,res) => {
     const apiKey = req.headers['API-Key'];
     res.statusCode = 200;
     res.setHeader('Content-Type','text/json');
-    res.send(sampleJson);
+    res.send(JSON.stringify(sampleJson, null, " "));
     res.end();
 });
 
@@ -165,9 +177,10 @@ app.get('/',(req,res) => {
     const apiKey = req.headers['API-Key'];
     res.statusCode = 200;
     res.write(`Connection successful to the host: ${os.hostname}`)
-    res.write('\nUse the /json endpoint to get a sample json endpoint')
     res.write('\nUse the /file endpoint to Benchmark the File oprations')
-    res.write('\nUse the /response endpoint to get the csv string of the response of Benchmarking the File oprations\n\n')
+    res.write('\nUse the /response endpoint to get the csv string of the response of Benchmarking the File oprations')
+    res.write('\nUse the /json endpoint to get a sample json endpoint')
+    res.write('\nUse the /externalapi endpoint to get a sample json response from an external API\n\n')
     res.end();
 })
 
