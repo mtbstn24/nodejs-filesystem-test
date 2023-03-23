@@ -131,11 +131,22 @@ function fileProcessMultiple() {
     status = true;
 }
 
+app.get('/externalapi', (req,res) => {
+    const apiKey = req.headers['API-Key'];
+    jsonapi = "https://dummyjson.com/products";
+    // request(jsonapi, function(error, response, body){
+    //     if(!error && response.statusCode == 200){
+    //         var info = JSON.parse(body);
+    //         res.send(info);
+    //     }
+    // });
+});
+
 app.get('/json', (req,res) => {
     const apiKey = req.headers['API-Key'];
     res.statusCode = 200;
     res.setHeader('Content-Type','text/json');
-    res.send(sampleJson);
+    res.send(JSON.stringify(sampleJson, null, " "));
     res.end();
 });
 
@@ -165,9 +176,10 @@ app.get('/',(req,res) => {
     const apiKey = req.headers['API-Key'];
     res.statusCode = 200;
     res.write(`Connection successful to the host: ${os.hostname}`)
-    res.write('\nUse the /json endpoint to get a sample json endpoint')
     res.write('\nUse the /file endpoint to Benchmark the File oprations')
     res.write('\nUse the /response endpoint to get the csv string of the response of Benchmarking the File oprations\n\n')
+    res.write('\nUse the /json endpoint to get a sample json endpoint')
+    res.write('\nUse the /externalapi endpoint to get a sample json response from an external API')
     res.end();
 })
 
