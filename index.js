@@ -132,6 +132,13 @@ function fileProcessMultiple() {
     status = true;
 }
 
+function fibonacci(n) {
+    if (n <= 1) {
+      return n;
+    }
+    return fibonacci(n - 1) + fibonacci(n - 2);
+  }
+
 app.get('/externalapi', (req,res) => {
     const apiKey = req.headers['API-Key'];
     axios.get('https://jsonplaceholder.typicode.com/users').then(jsonres => {
@@ -172,6 +179,12 @@ app.get('/response', (req,res) => {
         res.status(404).send("Respond not found or Process not completed. \nMake a request to /file endpoint first. \nWait for some time and try again if you have already requested /file endpoint.").end();
     }
 });
+
+app.get('/fibonacci/:n', (req, res) => {
+    const n = parseInt(req.params.n);
+    const result = fibonacci(n);
+    res.send({ result });
+  });
 
 app.get('/',(req,res) => {
     const apiKey = req.headers['API-Key'];
