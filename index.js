@@ -182,8 +182,13 @@ app.get('/response', (req,res) => {
 
 app.get('/fibonacci/:n', (req, res) => {
     const n = parseInt(req.params.n);
+    calStart = process.hrtime.bigint();
     const result = fibonacci(n);
-    res.send({ result });
+    calEnd = process.hrtime.bigint();
+    calDurationNS = (calEnd - calStart);
+    durationStr = calDurationNS.toString();
+    calDuration = parseInt(durationStr,10)/1000000;
+    res.send({ Result: result, CalculationDuration: calDuration });
   });
 
 app.get('/',(req,res) => {
