@@ -152,9 +152,10 @@ app.get('/externalapi', (req,res) => {
 
 app.get('/json', (req,res) => {
     const apiKey = req.headers['API-Key'];
+    var sJson = sampleJson.concat({time: `${Date.now()}`})
     res.statusCode = 200;
     res.setHeader('Content-Type','text/json');
-    res.send(JSON.stringify(sampleJson, null, " "));
+    res.send(JSON.stringify(sJson, null, " "));
     res.end();
 });
 
