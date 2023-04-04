@@ -181,15 +181,30 @@ app.get('/response', (req,res) => {
     }
 });
 
-app.get('/fibonacci/:n', (req, res) => {
-    const n = parseInt(req.params.n);
-    calStart = process.hrtime.bigint();
-    const result = fibonacci(n);
-    calEnd = process.hrtime.bigint();
-    var calDurationNS = (calEnd - calStart);
-    durationStr = calDurationNS.toString();
-    var calDuration = parseInt(durationStr,10)/1000000;
-    res.send({ Result: result, CalculationDuration: calDuration });
+app.get('/fibonacci', (req, res) => {
+    calDurationAvgs = [];
+    number = [0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40];
+    number_array = []
+    fibonacci_array = []
+    let result;
+    for (let index = 0; index < 21; index++) {
+        let calDurationSum = 0.0000
+        for (let iter = 0; iter < 5; iter++) {
+            calStart = process.hrtime.bigint();
+            result = fibonacci(number[index]);
+            calEnd = process.hrtime.bigint();
+            calDurationNS = (calEnd - calStart);
+            durationStr = calDurationNS.toString();
+            calDuration = parseInt(durationStr,10)/1000000;
+            calDurationSum = calDurationSum + calDuration
+        }
+
+        calDurationAvg = calDurationSum/5
+        calDurationAvgs.push(calDurationAvg)
+
+    }
+   
+    res.send({ number:number, CalculationDurationAverage : calDurationAvgs });
   });
 
 app.get('/',(req,res) => {
