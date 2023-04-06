@@ -13,9 +13,11 @@ const maxFileSize = 1024 * 1024 * 100; //100MB
 var writeDurations = [];
 var readDurations = [];
 var finalDurations = [];
+var calDurations;
 var writeDuration, readDuration;
 var filesizeInKB;
 var csvString;
+var fibString;
 var status;
 
 app.use((req,res,next)=>{
@@ -139,6 +141,45 @@ function fibonacci(n) {
     return fibonacci(n - 1) + fibonacci(n - 2);
   }
 
+  function getFibString(){
+    calDurationAvgs = [];
+    number = [0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44];
+    number_array = []
+    fibonacci_array = []
+    calDurations = []
+    let result;
+    let len = number.filter(function(x){return x !== 'undefined'}).length
+    for (let index = 0; index < len; index++) {
+        let calDurationSum = 0.0000
+        for (let iter = 0; iter < 5; iter++) {
+            calStart = process.hrtime.bigint();
+            result = fibonacci(number[index]);
+            calEnd = process.hrtime.bigint();
+            calDurationNS = (calEnd - calStart);
+            durationStr = calDurationNS.toString();
+            calDuration = parseInt(durationStr,10)/1000000;
+            calDurationSum = calDurationSum + calDuration
+        }
+
+        calDurationAvg = calDurationSum/5
+        calDurationAvgs.push(calDurationAvg)
+        calDurations.push({
+            FibonacciNumber: number[index],
+			FibonacciValue:  result,
+			CalDuration:     calDurationAvg,
+        });
+
+    }
+    fibString = [
+        ["Fibonacci Number", "Fibonacci Value", "Calculation Duration (ms)"],
+        ...calDurations.map(item => [
+            item.FibonacciNumber, item.FibonacciValue, item.CalDuration
+        ])
+    ].map(e => e.join(",")).join("\n");
+    console.log(fibString);
+
+  }
+
 app.get('/externalapi', (req,res) => {
     const apiKey = req.headers['API-Key'];
     axios.get('https://jsonplaceholder.typicode.com/users').then(jsonres => {
@@ -182,30 +223,25 @@ app.get('/response', (req,res) => {
 });
 
 app.get('/fibonacci', (req, res) => {
-    calDurationAvgs = [];
-    number = [0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40];
-    number_array = []
-    fibonacci_array = []
-    let result;
-    for (let index = 0; index < 21; index++) {
-        let calDurationSum = 0.0000
-        for (let iter = 0; iter < 5; iter++) {
-            calStart = process.hrtime.bigint();
-            result = fibonacci(number[index]);
-            calEnd = process.hrtime.bigint();
-            calDurationNS = (calEnd - calStart);
-            durationStr = calDurationNS.toString();
-            calDuration = parseInt(durationStr,10)/1000000;
-            calDurationSum = calDurationSum + calDuration
-        }
-
-        calDurationAvg = calDurationSum/5
-        calDurationAvgs.push(calDurationAvg)
-
-    }
-   
-    res.send({ number:number, CalculationDurationAverage : calDurationAvgs });
+    getFibString();
+    res.statusCode = 200;
+    res.setHeader('Content-Type','text/csv');
+    res.write(fibString);
+    res.end();
   });
+
+app.get('/fibresponse', (req,res) => {
+    const apiKey = req.headers['API-Key'];
+    if(fibString){
+        res.statusCode = 200;
+        res.setHeader('Content-Type','text/csv');
+        res.write(fibString);
+        res.end();
+    }else{
+        res.statusMessage = "Respond not found or Process not completed.";
+        res.status(404).send("Respond not found or Process not completed. \nMake a request to /fibonacci endpoint first. \nWait for some time and try again if you have already requested /file endpoint.").end();
+    }
+});
 
 app.get('/',(req,res) => {
     const apiKey = req.headers['API-Key'];
@@ -215,7 +251,8 @@ app.get('/',(req,res) => {
     res.write('\nUse the /response endpoint to get the csv string of the response of Benchmarking the File oprations')
     res.write('\nUse the /json endpoint to get a sample json endpoint');
     res.write('\nUse the /externalapi endpoint to get a sample json response from an external API')
-    res.write('\nUse the /fibanacci/n endpoint to get the nth fibonacci number and Duration\n\n')
+    res.write('\nUse the /fibonacci endpoint to calculate Fibonacci numbers and Durations')
+    res.write('\nUse the /fibresponse endpoint to get the Fibonacci Durations as csv\n\n')
     res.end();
 })
 
