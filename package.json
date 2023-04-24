@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "jest",
+    "test": "jest --json --outputFile=reports/report.json",
+    "test-coverage": "jest --coverage",
     "cov-convert": "xml-js coverage/cobertura-coverage.xml --compact",
     "test-convert": "xml-js reports/report.xml --compact"
   },
@@ -34,7 +35,7 @@
     "supertest": "^6.3.3"
   },
   "jest": {
-    "collectCoverage": true,
+    
     "coverageReporters": [
       "json",
       "lcov",
