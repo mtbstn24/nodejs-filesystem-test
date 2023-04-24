@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "jest"
+    "test": "jest",
+    "cov-convert": "xml-js coverage/cobertura-coverage.xml --compact",
+    "test-convert": "xml-js reports/report.xml --compact"
   },
   "repository": {
     "type": "git",
@@ -20,7 +22,9 @@
   "dependencies": {
     "axios": "^1.3.4",
     "dotenv": "^16.0.3",
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "jest-junit": "^16.0.0",
+    "xml-js": "^1.6.11"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
@@ -31,6 +35,26 @@
   },
   "jest": {
     "collectCoverage": true,
-    "coverageReporters": ["json", "lcov", "text", "clover"]
+    "coverageReporters": [
+      "json",
+      "lcov",
+      "text",
+      "clover",
+      "cobertura",
+      "json-summary",
+      "text-summary"
+    ],
+    "reporters": [
+      "default",
+      [
+        "jest-junit",
+        {
+          "outputDirectory": "reports",
+          "outputName": "report.xml",
+          "siutename" : "jest tests"
+        }
+      ],
+      "summary"
+    ]
   }
 }
