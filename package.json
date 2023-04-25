@@ -21,7 +21,9 @@
   },
   "homepage": "https://github.com/mtbstn24/nodejs-filesystem-test#readme",
   "dependencies": {
+    "@cvrg-report/cobertura-json": "^0.1.3",
     "axios": "^1.3.4",
+    "cobertura-parse": "^1.0.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "jest-junit": "^16.0.0",
@@ -35,7 +37,6 @@
     "supertest": "^6.3.3"
   },
   "jest": {
-    
     "coverageReporters": [
       "json",
       "lcov",
@@ -52,7 +53,7 @@
         {
           "outputDirectory": "reports",
           "outputName": "report.xml",
-          "siutename" : "jest tests"
+          "siutename": "jest tests"
         }
       ],
       "summary"

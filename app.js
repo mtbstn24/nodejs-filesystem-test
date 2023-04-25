@@ -6,6 +6,8 @@ const os = require('os');
 const { sampleJson } = require('./sample');
 const { default: axios } = require('axios');
 require('dotenv').config();
+var cobertura = require( "@cvrg-report/cobertura-json" );
+var cob = require( "cobertura-parse" );
 
 const fileDir = process.env.DIR;
 const minfileSize = 1024 * 10; //10KB
@@ -254,6 +256,76 @@ app.get('/',(req,res) => {
     res.write('\nUse the /fibonacci endpoint to calculate Fibonacci numbers and Durations')
     res.write('\nUse the /fibresponse endpoint to get the Fibonacci Durations as csv\n\n')
     res.end();
+})
+
+app.get('/cobertura',(req,res) => {
+    res.statusCode = 200;
+    // cobertura.parseFile("coverage/cobertura-coverage.xml")
+    // .then(function (result) {
+    //     console.log(JSON.stringify(result));
+    //     res.setHeader('Content-Type','text/json');
+    //     res.send(JSON.stringify(result));
+    // }).catch(function (err) {
+    //     console.error(err);
+    //     res.send(err);
+    // });
+    cob.parseFile( "coverage/cobertura-coverage.xml", function( err, result ) { 
+        if(err){
+            console.log(err);
+            res.send(err);
+        }
+        if(result){
+            console.log(result);
+            res.statusCode = 200;
+            res.setHeader('Content-Type','text/json');
+            var total_lines = 0;
+            var total_functions = 0;
+            var total_branches = 0;
+            var total_lines_hit = 0;
+            var total_functions_hit = 0;
+            var total_branches_hit = 0;
+            var files = result.length;
+            result.forEach(element => {
+                console.log("\nfirst\n");
+                console.log("\nlines\n");
+                console.log(element.lines);
+                total_lines += element.lines.found;
+                total_lines_hit += element.lines.hit;
+                console.log("\nfunctions\n");
+                console.log(element.functions);
+                total_functions += element.functions.found;
+                total_functions_hit += element.functions.hit;
+                console.log("\nbranches\n");
+                console.log(element.branches);
+                total_branches += element.branches.found;
+                total_branches_hit += element.branches.hit;
+            });
+            var cob_summary = [];
+            cob_summary = {
+                files: files,
+                total: {
+                    lines: {
+                        total: total_lines,
+                        covered: total_lines_hit,
+                        percentage: total_lines_hit*100/total_lines,
+                    },
+                    functions: {
+                        total: total_functions,
+                        covered: total_functions_hit,
+                        percentage: total_functions_hit*100/total_functions,
+                    },
+                    branches: {
+                        total: total_branches,
+                        covered: total_branches_hit,
+                        percentage: total_branches_hit*100/total_branches,
+                    }
+                }
+            }
+            console.log(`\nTotal lines found: ${total_lines}`);
+            console.log(`Total functions found: ${total_functions}`);
+            res.send(JSON.stringify(cob_summary));
+        }
+     } );
 })
 
 // app.listen(3000, ()=> console.log('App listening in port 3000.'));
