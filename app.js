@@ -286,17 +286,10 @@ app.get('/cobertura',(req,res) => {
             var total_branches_hit = 0;
             var files = result.length;
             result.forEach(element => {
-                console.log("\nfirst\n");
-                console.log("\nlines\n");
-                console.log(element.lines);
                 total_lines += element.lines.found;
                 total_lines_hit += element.lines.hit;
-                console.log("\nfunctions\n");
-                console.log(element.functions);
                 total_functions += element.functions.found;
                 total_functions_hit += element.functions.hit;
-                console.log("\nbranches\n");
-                console.log(element.branches);
                 total_branches += element.branches.found;
                 total_branches_hit += element.branches.hit;
             });
