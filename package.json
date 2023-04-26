@@ -27,6 +27,7 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "jest-junit": "^16.0.0",
+    "junitxml-to-javascript": "^1.1.4",
     "xml-js": "^1.6.11"
   },
   "devDependencies": {
@@ -53,7 +54,7 @@
         {
           "outputDirectory": "reports",
           "outputName": "report.xml",
-          "siutename": "jest tests"
+          "suitename": "jest tests"
         }
       ],
       "summary"
