@@ -8,6 +8,7 @@ const { default: axios } = require('axios');
 require('dotenv').config();
 var cobertura = require( "@cvrg-report/cobertura-json" );
 var cob = require( "cobertura-parse" );
+const Parser = require("junitxml-to-javascript");
 
 const fileDir = process.env.DIR;
 const minfileSize = 1024 * 10; //10KB
@@ -276,7 +277,6 @@ app.get('/cobertura',(req,res) => {
         }
         if(result){
             console.log(result);
-            res.statusCode = 200;
             res.setHeader('Content-Type','text/json');
             var total_lines = 0;
             var total_functions = 0;
@@ -319,6 +319,21 @@ app.get('/cobertura',(req,res) => {
             res.send(JSON.stringify(cob_summary));
         }
      } );
+})
+
+app.get('/report',(req,res) => {
+    res.statusCode = 200;
+    new Parser({customTag: "GENERAL1"})
+    .parseXMLFile("reports/report.xml")
+    .then(report => {
+        console.log(JSON.stringify(report, null, 2));
+        res.setHeader('Content-Type','text/json');
+        res.send(JSON.stringify(report, null, 2));
+    })
+    .catch(e => {
+        console.error(e.message);
+        res.send(err);
+    })
 })
 
 // app.listen(3000, ()=> console.log('App listening in port 3000.'));
