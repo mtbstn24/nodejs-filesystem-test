@@ -328,7 +328,26 @@ app.get('/report',(req,res) => {
     .then(report => {
         console.log(JSON.stringify(report, null, 2));
         res.setHeader('Content-Type','text/json');
-        res.send(JSON.stringify(report, null, 2));
+        //res.send(JSON.stringify(report, null, 2));
+        var test_suites = 0;
+            var total_tests = 0;
+            var success_tests = 0;
+            var total_durationSec = 0;
+            var test_suites = report.testsuites.length;
+            report.testsuites.forEach(element => {
+                total_tests += element.tests;
+                success_tests += element.succeeded;
+                total_durationSec += element.durationSec;
+            });
+            var rep_summary = [];
+            rep_summary = {
+                testSuites: test_suites,
+                totalTests: total_tests,
+                successTests: success_tests,
+                successPercentage: success_tests*100/total_tests,
+                totalDurationSec: total_durationSec,
+            }
+            res.send(JSON.stringify(rep_summary, null, 2));
     })
     .catch(e => {
         console.error(e.message);
